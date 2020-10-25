@@ -75,6 +75,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 0
+  _dominoObj: {fileID: 0}
+  _dominoPosition: {x: 0, y: 0, z: 0}
+  _dominoRotation: {x: 0, y: 0, z: 0, w: 0}
+  _dominoScale: {x: 0, y: 0, z: 0}
 --- !u!1 &6175545914863221582
 GameObject:
   m_ObjectHideFlags: 0
@@ -129,6 +133,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -140,6 +145,7 @@ MeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 1
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -289,20 +295,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 37369a4ef203fd14799e2fc571007287, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &4947482739760161328
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7403691127614666844}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: da3e4985fe542445c814ca78b87e6b9f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  UseSparseDepth: 0
-  ReprojectIntermediateSparseDepth: 1
 --- !u!1001 &7403691127614701308
 PrefabInstance:
   m_ObjectHideFlags: 0

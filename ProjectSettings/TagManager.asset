@@ -4,9 +4,8 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - Domino
-  - Plane
   - DetectedPlane
+  - Domino
   layers:
   - Default
   - TransparentFX
@@ -17,8 +16,8 @@ TagManager:
   - 
   - 
   - PostProcessing
-  - 
-  - 
+  - Screen Space
+  - Hand
   - 
   - 
   - 

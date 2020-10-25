@@ -14,6 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -33,11 +34,15 @@ public class DominoPlacing : MonoBehaviour
     public int count = 0;
     TwoPointSpawner pointSpwaner;
     public MainController mainController;
+    public static event Action onPlacedObject;
+    private List<Domino> holdDominos = new List<Domino>();
+    public GameObject swipe_panel;
+    public GameObject btn;
     // Start is called before the first frame update
     void Start()
     {
         _undoRedoManager = FindObjectOfType<UndoRedoManager>();
-        pointSpwaner = GetComponent<TwoPointSpawner>();
+        pointSpwaner = FindObjectOfType<TwoPointSpawner>();
         target = Camera.main.transform;
         if (mainController == null) 
         {
@@ -62,18 +67,25 @@ public class DominoPlacing : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(mRay, out hit))
         {
-           
-            if (hit.transform.CompareTag("DetectedPlane") || hit.transform.CompareTag("Domino"))
+
+            if (hit.transform.CompareTag("DetectedPlane") /*|| hit.transform.CompareTag("Domino")*/)
             {
-              
+
                 reticle.transform.position = hit.point;
-              
+
                 Vector3 targetPostition = new Vector3(target.position.x,
                                this.transform.position.y,
                                target.position.z);
                 this.transform.LookAt(targetPostition);
-             
-    
+
+                if (RectTransformUtility.RectangleContainsScreenPoint(btn.GetComponent<RectTransform>(), Input.mousePosition))
+                {
+                    return;
+                }      
+                if (RectTransformUtility.RectangleContainsScreenPoint(swipe_panel.GetComponent<RectTransform>(), Input.mousePosition))
+                {
+                    return;
+                }
 
                 if ((Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Ended) || Input.GetMouseButtonUp(0))
                 {
@@ -81,22 +93,34 @@ public class DominoPlacing : MonoBehaviour
                     {
                         return;
                     }
-                   
+
                     if (pointSpwaner.isDefault)
                     {
+
+                        onPlacedObject?.Invoke();
+
+                        holdDominos.Clear();
                         GameObject dominoSpawned = Instantiate(prefab, reticle.transform.position, reticle.transform.rotation);
                         dominoSpawned.GetComponent<SwitchOnRandomDomino>().colorID = colorID;
                         mainController.AddDomino(dominoSpawned);
-                        _undoRedoManager.LoadData(TransactionData.States.spawned, dominoSpawned, dominoSpawned.transform.position, dominoSpawned.transform.rotation, dominoSpawned.transform.localScale);
+
+                        Domino domino = new Domino();
+                        domino._dominoObj = dominoSpawned;
+                        domino._dominoPosition = dominoSpawned.transform.position;
+                        domino._dominoRotation = dominoSpawned.transform.rotation;
+                        domino._dominoScale = dominoSpawned.transform.localScale;
+                        holdDominos.Add(domino);
+
+                        _undoRedoManager.LoadData(TransactionData.States.spawned, holdDominos);
                     }
-                
+
                 }
 
-               
+
             }
-           
+
         }
-        
+
     }
 
     //private void OnTriggerEnter(Collider other)
