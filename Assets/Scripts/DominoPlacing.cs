@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 public class DominoPlacing : MonoBehaviour
 {
@@ -59,7 +60,7 @@ public class DominoPlacing : MonoBehaviour
         return results.Count > 0;
     }
 
-
+    public float Distance = 1.0f;
     void Update()
     {
         var center = new Vector2(Screen.width * ScreenPosition.x, Screen.height * ScreenPosition.y);
@@ -71,12 +72,34 @@ public class DominoPlacing : MonoBehaviour
             if (hit.transform.CompareTag("DetectedPlane") /*|| hit.transform.CompareTag("Domino")*/)
             {
 
-                reticle.transform.position = hit.point;
+                if (PlayerPrefs.GetInt("isStickyMode") == 0)
+                {
+                    reticle.transform.position = hit.point;
+                    Vector3 targetPostition = new Vector3(target.position.x,
+                        this.transform.position.y,
+                        target.position.z);
+                    this.transform.LookAt(targetPostition);
 
-                Vector3 targetPostition = new Vector3(target.position.x,
-                               this.transform.position.y,
-                               target.position.z);
-                this.transform.LookAt(targetPostition);
+                }
+                else if (PlayerPrefs.GetInt("isStickyMode") == 1)
+                {
+                    //reticle.transform.SetPositionAndRotation(hit.transform.position, hit.transform.rotation);
+                    
+                    //reticle.transform.position = hit.point;
+                   // transform.rotation = Quaternion.identity;
+                    Vector3 right = Vector3.right;
+                    if (hit.normal != Vector3.up)
+                    {
+                        right = Vector3.Cross(hit.normal, Vector3.up);
+                    }
+                    Vector3 forward = Vector3.Cross(hit.normal, right);
+                    Quaternion orientation = Quaternion.identity;
+                    orientation.SetLookRotation(forward, hit.normal);
+                    transform.rotation = Quaternion.Slerp(orientation, transform.rotation, 0.75f);
+                    transform.position = hit.point + (hit.normal * 0.01f);
+                    Distance = hit.distance;
+
+                }
 
                 if (RectTransformUtility.RectangleContainsScreenPoint(btn.GetComponent<RectTransform>(), Input.mousePosition))
                 {
@@ -101,7 +124,20 @@ public class DominoPlacing : MonoBehaviour
 
                         holdDominos.Clear();
                         GameObject dominoSpawned = Instantiate(prefab, reticle.transform.position, reticle.transform.rotation);
-                        dominoSpawned.GetComponent<SwitchOnRandomDomino>().colorID = colorID;
+                        dominoSpawned.GetComponent<SwitchOnRandomDomino>().colorID = PlayerPrefs.GetInt("isRandomColoring") == 1 ? Random.Range(1, 7) : colorID;
+                        if (PlayerPrefs.GetInt("isStickyMode") == 0)
+                        {
+                            dominoSpawned.GetComponent<SwitchOnRandomDomino>().Dominos[0].GetComponent<Rigidbody>().useGravity = true;
+                            print(dominoSpawned.GetComponent<SwitchOnRandomDomino>().Dominos[0].name);
+                        }
+                        else if (PlayerPrefs.GetInt("isStickyMode") == 1)
+                        {
+                            dominoSpawned.transform.GetChild(0).GetComponent<Rigidbody>().useGravity = false;
+                            dominoSpawned.transform.GetChild(0).GetComponent<Rigidbody>().isKinematic = true;
+                            print(dominoSpawned.transform.GetChild(0).name);
+                        }
+                        
+                        
                         mainController.AddDomino(dominoSpawned);
 
                         Domino domino = new Domino();

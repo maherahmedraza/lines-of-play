@@ -59,7 +59,6 @@ public class TwoPointSpawner : MonoBehaviour
     // Update is called once per frame
     void Start()
     {
-     
         if (mainController == null)
         {
             mainController = FindObjectOfType<MainController>();
@@ -88,8 +87,10 @@ public class TwoPointSpawner : MonoBehaviour
 
             Vector3 CreatPosition = PointA.position + (PointB.position - PointA.position) * (AlonThePath * i);
 
-            GameObject domino = Instantiate(dominoPrefab);
-            domino.GetComponent<SwitchOnRandomDomino>().colorID = PlayerPrefs.GetInt("ColorID");
+            // GameObject domino = Instantiate(dominoPrefab);
+            // domino.GetComponent<SwitchOnRandomDomino>().colorID = PlayerPrefs.GetInt("isRandomColoring") == 1 ? Random.Range(1, 7) : PlayerPrefs.GetInt("ColorID");
+           
+            GameObject domino = GenerateDomino();
             mainController.AddDomino(domino);
             domino.transform.position = CreatPosition;
             domino.transform.LookAt(PointB);
@@ -127,8 +128,9 @@ public class TwoPointSpawner : MonoBehaviour
             //print(rad);
             points[i] = new Vector3((Mathf.Sin(rad) * radius) + PointA.position.x, PointA.position.y, (Mathf.Cos(rad) * radius) + PointA.position.z);
            
-            var domino = Instantiate(dominoPrefab);
-            domino.GetComponent<SwitchOnRandomDomino>().colorID = PlayerPrefs.GetInt("ColorID");
+            // var domino = Instantiate(dominoPrefab);
+            // domino.GetComponent<SwitchOnRandomDomino>().colorID = PlayerPrefs.GetInt("isRandomColoring") == 1 ? Random.Range(1, 7) : PlayerPrefs.GetInt("ColorID");
+            GameObject domino = GenerateDomino();
             mainController.AddDomino(domino);
             domino.transform.position = points[i];
 
@@ -232,9 +234,9 @@ public class TwoPointSpawner : MonoBehaviour
 
             Vector3 CreatPosition = PointA.position + (PointB.position - PointA.position) * (AlonThePath * i);
 
-            GameObject domino = Instantiate(dominoPrefab);
-            domino.GetComponent<SwitchOnRandomDomino>().colorID = PlayerPrefs.GetInt("ColorID");
-      
+            // GameObject domino = Instantiate(dominoPrefab);
+            // domino.GetComponent<SwitchOnRandomDomino>().colorID = PlayerPrefs.GetInt("isRandomColoring") == 1 ? Random.Range(1, 7) : PlayerPrefs.GetInt("ColorID");
+            GameObject domino = GenerateDomino();
             mainController.AddDomino(domino);
             domino.transform.position = CreatPosition;
             domino.transform.LookAt(PointB);
@@ -404,6 +406,25 @@ public class TwoPointSpawner : MonoBehaviour
         isDefault = true;
 
         reticleBallon.SetActive(!isDefault);
+    }
+
+    public GameObject GenerateDomino()
+    {
+        GameObject domino = Instantiate(dominoPrefab);
+        domino.GetComponent<SwitchOnRandomDomino>().colorID = PlayerPrefs.GetInt("isRandomColoring") == 1 ? Random.Range(1, 7) : PlayerPrefs.GetInt("ColorID");
+       
+        if (PlayerPrefs.GetInt("isStickyMode") == 0)
+        {
+            domino.GetComponent<SwitchOnRandomDomino>().Dominos[0].GetComponent<Rigidbody>().useGravity = true;
+            print(domino.GetComponent<SwitchOnRandomDomino>().Dominos[0].name);
+        }
+        else if (PlayerPrefs.GetInt("isStickyMode") == 1)
+        {
+            domino.transform.GetChild(0).GetComponent<Rigidbody>().useGravity = false;
+            print(domino.transform.GetChild(0).name);
+        }
+      
+        return domino;
     }
 }
 

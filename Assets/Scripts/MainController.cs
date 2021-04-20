@@ -14,6 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+using System;
 using GoogleARCore.Examples.HelloAR;
 using System.Collections;
 using System.Collections.Generic;
@@ -33,6 +34,7 @@ public class MainController : MonoBehaviour
     public GameObject placementBtn;
     public GameObject coloringBtn;
     public GameObject ButtonTopple;
+    public GameObject stickModeBtn;
     public Sprite[] colors;
     public Image colorIndicator;
     public DominoARController dominoARController;
@@ -51,7 +53,7 @@ public class MainController : MonoBehaviour
     public GameObject dominoSmall;
     public GameObject dominoBig;
 
-
+    public Sprite randomColorSprite;
     //public PlaneDiscoveryGuide discoveryGuide;
     public GameObject mainCanvas;
     public MainUI mainUI;
@@ -79,6 +81,9 @@ public class MainController : MonoBehaviour
         //StartCoroutine(setPlanesGuideUi());
         ButtonTopple.GetComponent<Image>().color = dimWhite;
         _undoRedoManager = FindObjectOfType<UndoRedoManager>();
+        
+        PlayerPrefs.SetInt("isStickyMode", 0);
+        ButtonTopple.GetComponent<Image>().color = dimWhite;
     }
 
     IEnumerator setPlanesGuideUi()
@@ -234,7 +239,14 @@ public class MainController : MonoBehaviour
         reticle.GetComponent<DominoPlacing>().colorID = colorID;
         colorIndicator.sprite = colors[colorID];
         PlayerPrefs.SetInt("ColorID", colorID);
+        PlayerPrefs.SetInt("isRandomColoring", 0);
         //Coloring();
+    }
+
+    public void RandomColor()
+    {
+        PlayerPrefs.SetInt("isRandomColoring", 1);
+        colorIndicator.sprite = randomColorSprite;
     }
 
     int clickCounter = 0;
@@ -361,4 +373,18 @@ public class MainController : MonoBehaviour
         paintable.enabled = false;
     }
 
+    public void StickyMode()
+    {
+        if (PlayerPrefs.GetInt("isStickyMode") == 0)
+        {
+            PlayerPrefs.SetInt("isStickyMode", 1);
+            stickModeBtn.GetComponent<Image>().color = Color.white;
+        }
+        else if (PlayerPrefs.GetInt("isStickyMode") == 1)
+        {
+            PlayerPrefs.SetInt("isStickyMode", 0);
+            ButtonTopple.GetComponent<Image>().color = dimWhite;
+        }
+        print(PlayerPrefs.GetInt("isStickyMode"));
+    }
 }

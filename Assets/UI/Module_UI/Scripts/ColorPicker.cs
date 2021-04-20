@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class ColorPicker : MonoBehaviour
 {
     public GameObject[] colors;
-    public Sprite red, orange, yellow, green, turqoaise, blue;
+    public Sprite red, orange, yellow, green, turqoaise, blue, randomColor;
     public bool opened = false;
     private void Awake()
     {
@@ -55,6 +55,12 @@ public class ColorPicker : MonoBehaviour
     {
         MainUI.Instance.currentGradient = Gradient.Blue;
         GetComponent<Image>().sprite = blue;
+        OnColorPickerPress();
+    }
+
+    public void OnRandomColorPress()
+    {
+        GetComponent<Image>().sprite = randomColor;
         OnColorPickerPress();
     }
 }
